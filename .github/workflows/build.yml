@@ -8,9 +8,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Build the Docker image
-        run: docker build ./builder --file Dockerfile --tag ${{ github.repository }}:latest
+      - name: build Docker image
+        run: |
+          cd builder
+          docker build . --file Dockerfile --tag ${{ github.repository }}:latest
 
-      - name: Run the Docker image
+      - name: run Docker image
         run: docker run -i -e GITHUB_KEY=${{ secrets.GITHUB_TOKEN }} -e REPO=${{ github.repository }} ${{ github.repository }}:latest
 
