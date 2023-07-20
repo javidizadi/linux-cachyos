@@ -68,6 +68,7 @@ ip6_udp_tunnel
 ipmi_devintf
 ipmi_msghandler
 ip_tables
+iptable_filter
 iptable_nat
 ipt_REJECT
 irqbypass
@@ -172,8 +173,10 @@ wireguard
 wmi
 wmi_bmof
 x86_pkg_temp_thermal
+x_tables
 xt_addrtype
 xt_CHECKSUM
+xt_comment
 xt_conntrack
 xt_MASQUERADE
 zram
