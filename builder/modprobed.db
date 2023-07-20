@@ -68,6 +68,7 @@ ip6_udp_tunnel
 ipmi_devintf
 ipmi_msghandler
 ip_tables
+iptable_nat
 ipt_REJECT
 irqbypass
 isofs
