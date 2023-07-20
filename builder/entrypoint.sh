@@ -20,8 +20,10 @@ pkgrel=$(grep pkgrel PKGBUILD | head -1 | cut -c 8-)
 version="$major.$minor-$pkgrel"
 repo=$(printenv REPO)
 echo "Checking for same release..."
+set +e
 gh release view "$version" --repo "$repo"
 tag_exists=$?
+set -e
 if test $tag_exists -eq 0; then
     echo "Tag already exists!"
     echo "Removing previous release..."
