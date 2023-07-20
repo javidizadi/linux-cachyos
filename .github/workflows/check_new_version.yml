@@ -1,4 +1,4 @@
-name: Check new version
+name: check new version
 
 on:
   schedule:
@@ -14,18 +14,20 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Check for new version
+      - name: check for new version
         id: check
         run: |
-          prev_commit_id=$(git rev-parse HEAD)
           echo "Syncing fork repository from its parent..."
           gh repo sync javidizadi/linux-cachyos -b master
-          git pull
-          new_commit_id=$(git rev-parse HEAD)
-          different=$(git diff ${prev_commit_id} ${new_commit_id} -- ${{ env.PACKAGE_NAME }})
-          if [ -n "$different" ]; then
+          set +e
+          git pull | grep -q -e "^ ${{ env.PACKAGE_NAME }}\/"
+          new_update=$?
+          set -e
+          if test $tag_exists -eq 0; then
+            echo "New update available!"
             echo "is_new=true" >> "$GITHUB_OUTPUT"
           fi
+
 
   call-build-workflow:
     needs: check-new-version
