@@ -23,7 +23,7 @@ jobs:
           git pull | grep -q -e "^ ${{ env.PACKAGE_NAME }}\/"
           new_update=$?
           set -e
-          if test $tag_exists -eq 0; then
+          if [ $new_update -eq 0 ]; then
             echo "New update available!"
             echo "is_new=true" >> "$GITHUB_OUTPUT"
           fi
