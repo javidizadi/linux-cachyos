@@ -26,6 +26,8 @@ jobs:
           if [ $new_update -eq 0 ]; then
             echo "New update available!"
             echo "is_new=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No new update found."
           fi
 
 
