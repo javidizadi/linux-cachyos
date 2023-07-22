@@ -1,8 +1,8 @@
 name: check new version
 
 on:
-  schedule:
-    - cron:  '15,40 * * * *'
+#  schedule:
+#    - cron:  '15,40 * * * *'
 
   workflow_dispatch:
 
