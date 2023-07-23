@@ -4,6 +4,7 @@ on: [workflow_call, workflow_dispatch]
 
 env:
   PACKAGE_NAME: linux-cachyos
+  PATH_HASH: ./"${{ env.PACKAGE_NAME }}"/*
 
 jobs:
   build:
@@ -15,7 +16,7 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: ./builder/cache
-          key: ccache-${{ env.PACKAGE_NAME }}-${{ hashFiles('${{ env.PACKAGE_NAME }}/*') }}
+          key: ccache-${{ env.PACKAGE_NAME }}-${{ hashFiles('${{ env.PATH_HASH }}') }}
           restore-keys: |
             ccache-${{ env.PACKAGE_NAME }}
             ccache-
