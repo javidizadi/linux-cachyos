@@ -2,17 +2,28 @@ name: Build
 
 on: [workflow_call, workflow_dispatch]
 
+env:
+  PACKAGE_NAME: linux-cachyos
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
+      
+      - uses: actions/cache@v3
+        with:
+          path: ./builder/cache
+          key: ccache-${{ env.PACKAGE_NAME }}-${{ hashFiles('./${{ env.PACKAGE_NAME }}/*') }}
+          restore-keys: |
+            ccache-${{ env.PACKAGE_NAME }}
+            ccache-
+
       - name: build Docker image
         run: |
           cd builder
           docker build . --file Dockerfile --tag ${{ github.repository }}:latest
 
       - name: run Docker image
-        run: docker run -i -e GITHUB_KEY=${{ secrets.GITHUB_TOKEN }} -e REPO=${{ github.repository }} ${{ github.repository }}:latest
-
+        run: docker run -i -e GITHUB_KEY=${{ secrets.GITHUB_TOKEN }} -e REPO=${{ github.repository }} -e PKG=${{ env.PACKAGE_NAME }} ${{ github.repository }}:latest
