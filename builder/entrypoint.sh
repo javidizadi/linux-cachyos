@@ -1,17 +1,17 @@
 #!/bin/bash
 set -e
-cd /home/builder
+cd $HOME
 git clone -b master https://github.com/CachyOS/linux-cachyos
 cd linux-cachyos/linux-cachyos
 echo "Compiling kernel..."
 env _processor_opt="sandybridge" \
-    _disable_debug=y \
-    _NUMAdisable=y \
-    _nr_cpus=4 \
-    _use_auto_optimization='' \
-    _localmodcfg=y \
-    _cc_harder=y \
-    makepkg
+_disable_debug=y \
+_NUMAdisable=y \
+_nr_cpus=4 \
+_use_auto_optimization='' \
+_localmodcfg=y \
+_cc_harder=y \
+makepkg
 echo "Logining in to GitHub..."
 printenv GITHUB_KEY | gh auth login --with-token
 minor=$(grep _minor PKGBUILD | head -1 | cut -c 8-)
