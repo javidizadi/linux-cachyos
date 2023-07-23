@@ -1,9 +1,12 @@
 #!/bin/bash
 set -e
+export PATH="/usr/lib/ccache/bin:$PATH"
+sudo chmod -R a+rw $HOME/.cache/ccache
 cd $HOME
 git clone -b master https://github.com/CachyOS/linux-cachyos
 cd linux-cachyos/linux-cachyos
 echo "Compiling kernel..."
+KBUILD_BUILD_TIMESTAMP='' \
 env _processor_opt="sandybridge" \
 _disable_debug=y \
 _NUMAdisable=y \
@@ -11,7 +14,7 @@ _nr_cpus=4 \
 _use_auto_optimization='' \
 _localmodcfg=y \
 _cc_harder=y \
-makepkg
+makepkg -s --noconfirm
 echo "Logining in to GitHub..."
 printenv GITHUB_KEY | gh auth login --with-token
 minor=$(grep _minor PKGBUILD | head -1 | cut -c 8-)
