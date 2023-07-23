@@ -15,7 +15,7 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: ./builder/cache
-          key: ccache-${{ env.PACKAGE_NAME }}-${{ hashFiles('./${{ env.PACKAGE_NAME }}/*') }}
+          key: ccache-${{ env.PACKAGE_NAME }}-${{ hashFiles('./${{ env.PACKAGE_NAME }}') }}
           restore-keys: |
             ccache-${{ env.PACKAGE_NAME }}
             ccache-
@@ -26,4 +26,4 @@ jobs:
           docker build . --file Dockerfile --tag ${{ github.repository }}:latest
 
       - name: run Docker image
-        run: docker run -i -e GITHUB_KEY=${{ secrets.GITHUB_TOKEN }} -e REPO=${{ github.repository }} -e PKG=${{ env.PACKAGE_NAME }} ${{ github.repository }}:latest
+        run: docker run -i -e GITHUB_KEY=${{ secrets.GITHUB_TOKEN }} -e REPO=${{ github.repository }} -e PKG=${{ env.PACKAGE_NAME }} -v "$(realpath ./cache)":/home/builder/.cache/ccache:Z ${{ github.repository }}:latest
