@@ -15,7 +15,7 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: ./builder/cache
-          key: ccache-${{ env.PACKAGE_NAME }}-${{ hashFiles('./"${{ env.PACKAGE_NAME }}"/*') }}
+          key: ccache-${{ env.PACKAGE_NAME }}-${{ hashFiles('./linux-cachyos/*') }}
           restore-keys: |
             ccache-${{ env.PACKAGE_NAME }}
             ccache-
