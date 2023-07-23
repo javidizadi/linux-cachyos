@@ -33,7 +33,7 @@ jobs:
 
   call-build-workflow:
     needs: check-new-version
-    if: ${{ needs.build.outputs.new_version == 'true' }}
+    if: ${{ needs.check-new-version.outputs.new_version == 'true' }}
     uses: javidizadi/linux-cachyos/.github/workflows/build.yml@master
     
 
