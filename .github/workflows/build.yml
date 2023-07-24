@@ -11,24 +11,19 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      
-      - name: change directory to ${{ env.PACKAGE_NAME }}
-        run: cd ${{ env.PACKAGE_NAME }}
-      
-      - run: ls
 
       - uses: actions/cache@v3
+        working-directory: ./${{ env.PACKAGE_NAME }}
         with:
           path: ../builder/cache
-          key: ccache-${{ env.PACKAGE_NAME }}-${{ hashFiles('./.SRCINFO','./PKGBUILD') }}
+          key: ccache-${{ env.PACKAGE_NAME }}-${{ hashFiles('./*') }}
           restore-keys: |
             ccache-${{ env.PACKAGE_NAME }}
             ccache-
 
       - name: build Docker image
-        run: |
-          cd ../builder
-          docker build . --file Dockerfile --tag ${{ github.repository }}:latest
+        working-directory: ../builder
+        run: docker build . --file Dockerfile --tag ${{ github.repository }}:latest
 
       - name: run Docker image
         run: docker run -i -e GITHUB_KEY=${{ secrets.GITHUB_TOKEN }} -e REPO=${{ github.repository }} -e PKG=${{ env.PACKAGE_NAME }} -v "$(realpath ./cache)":/home/builder/.cache/ccache:Z ${{ github.repository }}:latest
