@@ -12,10 +12,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Compute directory of package SHA256
+        run: |
+          cd ${{ env.PACKAGE_NAME }}
+          hash=$(find . -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum)
+          echo "PACKAGE_DIRECTORY_HASH=$hash" >> $GITHUB_ENV
+
       - uses: actions/cache@v3
         with:
           path: ../builder/cache
-          key: ccache-${{ env.PACKAGE_NAME }}-${{ hashFiles('./{{ env.PACKAGE_NAME }}/*') }}
+          key: ccache-${{ env.PACKAGE_NAME }}-${{ env.PACKAGE_DIRECTORY_HASH }}
           restore-keys: |
             ccache-${{ env.PACKAGE_NAME }}
             ccache-
