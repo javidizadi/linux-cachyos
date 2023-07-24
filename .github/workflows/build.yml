@@ -8,23 +8,24 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      SRCINFO_PATH: "./${{ env.PACKAGE_NAME }}/.SRCINFO"
 
     steps:
       - uses: actions/checkout@v3
       
+      - name: change directory to ${{ env.PACKAGE_NAME }}
+        run: cd ${{ env.PACKAGE_NAME }}
+
       - uses: actions/cache@v3
         with:
-          path: ./builder/cache
-          key: ccache-${{ env.PACKAGE_NAME }}-${{ hashFiles('${{ env.SRCINFO_PATH }}') }}
+          path: ../builder/cache
+          key: ccache-${{ env.PACKAGE_NAME }}-${{ hashFiles('./.SRCINFO') }}
           restore-keys: |
             ccache-${{ env.PACKAGE_NAME }}
             ccache-
 
       - name: build Docker image
         run: |
-          cd builder
+          cd ../builder
           docker build . --file Dockerfile --tag ${{ github.repository }}:latest
 
       - name: run Docker image
