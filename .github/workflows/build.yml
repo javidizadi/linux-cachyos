@@ -18,7 +18,7 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: ../builder/cache
-          key: ccache-${{ env.PACKAGE_NAME }}-${{ hashFiles('./.SRCINFO') }}
+          key: ccache-${{ env.PACKAGE_NAME }}-${{ hashFiles('./.SRCINFO','./PKGBUILD') }}
           restore-keys: |
             ccache-${{ env.PACKAGE_NAME }}
             ccache-
