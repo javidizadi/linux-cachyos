@@ -14,6 +14,8 @@ jobs:
       
       - name: change directory to ${{ env.PACKAGE_NAME }}
         run: cd ${{ env.PACKAGE_NAME }}
+      
+      - run: cat ./PKGBUILD
 
       - uses: actions/cache@v3
         with:
