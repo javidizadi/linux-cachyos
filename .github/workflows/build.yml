@@ -8,6 +8,8 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      SRCINFO_PATH: "./${{ env.PACKAGE_NAME }}/.SRCINFO"
 
     steps:
       - uses: actions/checkout@v3
@@ -15,7 +17,7 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: ./builder/cache
-          key: ccache-${{ env.PACKAGE_NAME }}-${{ hashFiles('./"${{ env.PACKAGE_NAME }}"/.SRCINFO') }}
+          key: ccache-${{ env.PACKAGE_NAME }}-${{ hashFiles('${{ env.SRCINFO_PATH }}') }}
           restore-keys: |
             ccache-${{ env.PACKAGE_NAME }}
             ccache-
