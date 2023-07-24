@@ -18,6 +18,8 @@ jobs:
           hash=$(find . -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum)
           echo "PACKAGE_DIRECTORY_HASH=$hash" >> $GITHUB_ENV
 
+      - run: mkdir ./builder/cache
+
       - uses: actions/cache@v3
         with:
           path: ./builder/cache
