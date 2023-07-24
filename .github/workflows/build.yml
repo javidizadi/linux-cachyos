@@ -27,7 +27,7 @@ jobs:
             ccache-
 
       - name: build Docker image
-        working-directory: ../builder
+        working-directory: builder
         run: docker build . --file Dockerfile --tag ${{ github.repository }}:latest
 
       - name: run Docker image
