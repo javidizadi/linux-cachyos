@@ -20,7 +20,7 @@ jobs:
 
       - uses: actions/cache@v3
         with:
-          path: ../builder/cache
+          path: ./builder/cache
           key: ccache-${{ env.PACKAGE_NAME }}-${{ env.PACKAGE_DIRECTORY_HASH }}
           restore-keys: |
             ccache-${{ env.PACKAGE_NAME }}
