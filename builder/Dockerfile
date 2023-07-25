@@ -1,7 +1,5 @@
 FROM archlinux:latest
-#RUN pacman -Suy --noconfirm --needed git base-devel github-cli ccache > /dev/null
-#test
-RUN pacman -Suy --noconfirm --needed sudo 
+RUN pacman -Suy --noconfirm --needed git base-devel github-cli ccache > /dev/null
 RUN useradd -m builder
 RUN echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 USER builder

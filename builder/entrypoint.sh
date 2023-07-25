@@ -2,9 +2,6 @@
 set -e
 export PATH="/usr/lib/ccache/bin:$PATH"
 sudo chmod -R a+rw $HOME/.cache/ccache
-#test 
-echo "TEST" >> $HOME/.cache/ccache/TEST
-exit 0
 cd $HOME
 git clone -b master https://github.com/CachyOS/linux-cachyos
 cd linux-cachyos/$PKG
