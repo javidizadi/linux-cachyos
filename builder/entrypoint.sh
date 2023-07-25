@@ -21,7 +21,7 @@ minor=$(grep _minor PKGBUILD | head -1 | cut -c 8-)
 major=$(grep _major PKGBUILD | head -1 | cut -c 8-)
 pkgrel=$(grep pkgrel PKGBUILD | head -1 | cut -c 8-)
 scheduler=$(printenv PKG | cut -c 15-)
-version="$scheduler-v$major.$minor-$pkgrel"
+version="$scheduler-$major.$minor-$pkgrel"
 repo=$(printenv REPO)
 echo "Checking for same release..."
 set +e
