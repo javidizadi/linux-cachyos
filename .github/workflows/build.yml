@@ -38,4 +38,4 @@ jobs:
 
 
       #test
-      - run: realpath ./builder/cache
+      - run: ls ./builder/cache
