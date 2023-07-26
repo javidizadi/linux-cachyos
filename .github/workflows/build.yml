@@ -1,9 +1,14 @@
 name: build
 
-on: [workflow_call, workflow_dispatch]
+on: 
+  workflow_call:
+    inputs:
+      package-name:
+        required: true
+        type: string
 
 env:
-  PACKAGE_NAME: linux-cachyos
+  PACKAGE_NAME: ${{ inputs.package-name }}
 
 jobs:
   build:

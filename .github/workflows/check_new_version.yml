@@ -1,21 +1,19 @@
 name: check new version
 
 on:
-#  schedule:
-#    - cron:  '15,40 * * * *'
+ schedule:
+   - cron:  '15,40 * * * *'
 
   workflow_dispatch:
 
 jobs:
   check-new-version:
     runs-on: ubuntu-latest
-    outputs:
-      new_version: ${{ steps.check.is_new }}
+
     steps:
       - uses: actions/checkout@v3
 
       - name: check for new version
-        id: check
         run: |
           echo "Syncing fork repository from its parent..."
           gh repo sync javidizadi/linux-cachyos -b master
@@ -25,7 +23,7 @@ jobs:
           set -e
           if [ $new_update -eq 0 ]; then
             echo "New update available!"
-            echo "is_new=true" >> "$GITHUB_OUTPUT"
+            echo "NEW_UPDATE='true'" >> $GITHUB_ENV
           else
             echo "No new update found."
           fi
@@ -33,10 +31,11 @@ jobs:
 
   call-build-workflow:
     needs: check-new-version
-    if: ${{ needs.check-new-version.outputs.new_version == 'true' }}
+    if: ${{ env.NEW_UPDATE == 'true' }}
     uses: javidizadi/linux-cachyos/.github/workflows/build.yml@master
+    with:
+      package-name: "linux-cachyos"
     
 
 env:
-  PACKAGE_NAME: "linux-cachyos"
   GH_TOKEN: ${{ github.token }}
