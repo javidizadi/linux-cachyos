@@ -36,7 +36,7 @@ jobs:
 
   call-build-workflow:
     needs: check-new-version
-    if: ${{ needs.check-new-version.outputs.new_update == 'FALSE' }}
+    if: ${{ needs.check-new-version.outputs.new_update == 'TRUE' }}
     uses: javidizadi/linux-cachyos/.github/workflows/build.yml@master
     with:
       package-name: "linux-cachyos"
