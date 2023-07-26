@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  check_new_version:
+  check-new-version:
     runs-on: ubuntu-latest
 
     outputs:
@@ -35,8 +35,8 @@ jobs:
 
 
   call-build-workflow:
-    needs: check_new_version
-    if: ${{needs.check_new_version.outputs.new_update == 'FALSE'}}
+    needs: check-new-version
+    if: ${{needs.check-new-version.outputs.new_update == 'FALSE'}}
     uses: javidizadi/linux-cachyos/.github/workflows/build.yml@master
     with:
       package-name: "linux-cachyos"
