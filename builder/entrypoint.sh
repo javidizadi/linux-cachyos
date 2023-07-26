@@ -20,7 +20,7 @@ printenv GITHUB_KEY | gh auth login --with-token
 minor=$(grep _minor PKGBUILD | head -1 | cut -c 8-)
 major=$(grep _major PKGBUILD | head -1 | cut -c 8-)
 pkgrel=$(grep pkgrel PKGBUILD | head -1 | cut -c 8-)
-scheduler=$(printenv PKG | cut -c 15-)
+scheduler=$(echo $PKG | cut -c 15-)
 if [[ -z "${scheduler//}" ]]; then
     version="$scheduler-v$major.$minor-$pkgrel"
 else
