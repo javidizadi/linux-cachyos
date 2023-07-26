@@ -34,4 +34,10 @@ jobs:
 
       - name: run Docker image
         working-directory: builder
-        run: docker run -i -e GITHUB_KEY=${{ secrets.GITHUB_TOKEN }} -e REPO=${{ github.repository }} -e PKG=${{ env.PACKAGE_NAME }} -v "$(realpath ./cache)":/home/builder/.cache/ccache:Z ${{ github.repository }}:latest
+        run: |
+          docker run -i \
+          -e GITHUB_KEY=${{ secrets.GITHUB_TOKEN }} \
+          -e REPO=${{ github.repository }} \
+          -e PKG=${{ env.PACKAGE_NAME }} \
+          -v "$(realpath ./cache)":/home/builder/.cache/ccache:Z \
+          ${{ github.repository }}:latest
