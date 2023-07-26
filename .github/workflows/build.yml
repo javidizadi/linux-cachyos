@@ -15,7 +15,7 @@ jobs:
       - name: Compute SHA256 of package directory
         run: |
           cd ${{ env.PACKAGE_NAME }}
-          hash=$(find . -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum)
+          hash=$(find . -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -c 1-64)
           echo "PACKAGE_DIRECTORY_HASH=$hash" >> $GITHUB_ENV
 
       - run: mkdir ./builder/cache
