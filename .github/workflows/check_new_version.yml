@@ -23,10 +23,10 @@ jobs:
           set -e
           if [ $new_update -eq 0 ]; then
             echo "New update available!"
-            echo "::set-output name=NEW_UPDATE::TRUE"
+            echo "NEW_UPDATE=TRUE" >> $GITHUB_OUTPUT
           else
             echo "No new update found."
-            echo "::set-output name=NEW_UPDATE::FALSE"
+            echo "NEW_UPDATE=FALSE" >> $GITHUB_OUTPUT
           fi
 
 
