@@ -20,11 +20,11 @@ printenv GITHUB_KEY | gh auth login --with-token
 minor=$(grep _minor PKGBUILD | head -1 | cut -c 8-)
 major=$(grep _major PKGBUILD | head -1 | cut -c 8-)
 pkgrel=$(grep pkgrel PKGBUILD | head -1 | cut -c 8-)
-scheduler=$(echo $PKG | cut -c 15- | tr -d ' ')
-if [ -n $scheduler ]; then
-    version="$scheduler-v$major.$minor-$pkgrel"
+scheduler=$(echo $PKG | cut -c 15-)
+if [ -z "$scheduler" ]; then
+    version="v${major}.${minor}-${pkgrel}"
 else
-    version="v$major.$minor-$pkgrel"
+    version="${scheduler}-v${major}.${minor}-${pkgrel}"
 fi
 repo=$(printenv REPO)
 echo "Checking for same release..."
