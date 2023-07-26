@@ -26,7 +26,7 @@ if [ -n $scheduler ]; then
 else
     version="v$major.$minor-$pkgrel"
 fi
-echo $scheduler
+echo "string: ${scheduler}"
 exit 0
 repo=$(printenv REPO)
 echo "Checking for same release..."
