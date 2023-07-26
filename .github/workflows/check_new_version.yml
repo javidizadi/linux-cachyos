@@ -39,7 +39,7 @@ jobs:
     if: ${{ needs.check-new-version.outputs.new_update == 'FALSE' }}
     uses: javidizadi/linux-cachyos/.github/workflows/build.yml@master
     with:
-      package-name: ${{ env.PACKAGE_NAME }}
+      package-name: "linux-cachyos"
     
 
 env:
