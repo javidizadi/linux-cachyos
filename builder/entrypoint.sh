@@ -2,9 +2,9 @@
 # set -e
 # export PATH="/usr/lib/ccache/bin:$PATH"
 # sudo chmod -R a+rw $HOME/.cache/ccache
-# cd $HOME
-# git clone -b master https://github.com/CachyOS/linux-cachyos
-# cd linux-cachyos/$PKG
+cd $HOME
+git clone -b master https://github.com/CachyOS/linux-cachyos
+cd linux-cachyos/$PKG
 # echo "Compiling kernel..."
 # KBUILD_BUILD_TIMESTAMP='' \
 # env _processor_opt="sandybridge" \
