@@ -23,16 +23,16 @@ jobs:
           set -e
           if [ $new_update -eq 0 ]; then
             echo "New update available!"
-            echo "NEW_UPDATE='TRUE'" >> $GITHUB_OUTPUT
+            echo "NEW_UPDATE=TRUE" >> "$GITHUB_OUTPUT"
           else
             echo "No new update found."
-            echo "NEW_UPDATE='FALSE'" >> $GITHUB_OUTPUT
+            echo "NEW_UPDATE=FALSE" >> "$GITHUB_OUTPUT"
           fi
 
 
   call-build-workflow:
     needs: check_new_version
-    if: ${{ needs.check_new_version.outputs.NEW_UPDATE == 'FALSE' }}
+    if: ${{needs.check_new_version.outputs.NEW_UPDATE == 'FALSE'}}
     uses: javidizadi/linux-cachyos/.github/workflows/build.yml@master
     with:
       package-name: "linux-cachyos"
