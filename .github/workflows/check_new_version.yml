@@ -10,10 +10,14 @@ jobs:
   check_new_version:
     runs-on: ubuntu-latest
 
+    outputs:
+      new_update: ${{ steps.check.outputs.new_update }}
+
     steps:
       - uses: actions/checkout@v3
 
       - name: check for new version
+        id: check
         run: |
           echo "Syncing fork repository from its parent..."
           gh repo sync javidizadi/linux-cachyos -b master
@@ -23,16 +27,16 @@ jobs:
           set -e
           if [ $new_update -eq 0 ]; then
             echo "New update available!"
-            echo "NEW_UPDATE=TRUE" >> "$GITHUB_OUTPUT"
+            echo "new_update=TRUE" >> "$GITHUB_OUTPUT"
           else
             echo "No new update found."
-            echo "NEW_UPDATE=FALSE" >> "$GITHUB_OUTPUT"
+            echo "new_update=FALSE" >> "$GITHUB_OUTPUT"
           fi
 
 
   call-build-workflow:
     needs: check_new_version
-    if: ${{needs.check_new_version.outputs.NEW_UPDATE == 'FALSE'}}
+    if: ${{needs.check_new_version.outputs.new_update == 'FALSE'}}
     uses: javidizadi/linux-cachyos/.github/workflows/build.yml@master
     with:
       package-name: "linux-cachyos"
