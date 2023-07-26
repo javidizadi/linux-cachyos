@@ -1,23 +1,31 @@
 #!/bin/bash
 set -e
-cd /home/builder
+export PATH="/usr/lib/ccache/bin:$PATH"
+sudo chmod -R a+rw $HOME/.cache/ccache
+cd $HOME
 git clone -b master https://github.com/CachyOS/linux-cachyos
-cd linux-cachyos/linux-cachyos
+cd linux-cachyos/$PKG
 echo "Compiling kernel..."
+KBUILD_BUILD_TIMESTAMP='' \
 env _processor_opt="sandybridge" \
-    _disable_debug=y \
-    _NUMAdisable=y \
-    _nr_cpus=4 \
-    _use_auto_optimization='' \
-    _localmodcfg=y \
-    _cc_harder=y \
-    makepkg
+_disable_debug=y \
+_NUMAdisable=y \
+_nr_cpus=4 \
+_use_auto_optimization='' \
+_localmodcfg=y \
+_cc_harder=y \
+makepkg -s --noconfirm
 echo "Logining in to GitHub..."
 printenv GITHUB_KEY | gh auth login --with-token
 minor=$(grep _minor PKGBUILD | head -1 | cut -c 8-)
 major=$(grep _major PKGBUILD | head -1 | cut -c 8-)
 pkgrel=$(grep pkgrel PKGBUILD | head -1 | cut -c 8-)
-version="$major.$minor-$pkgrel"
+scheduler=$(echo $PKG | cut -c 15-)
+if [ -z "$scheduler" ]; then
+    version="v${major}.${minor}-${pkgrel}"
+else
+    version="${scheduler}-v${major}.${minor}-${pkgrel}"
+fi
 repo=$(printenv REPO)
 echo "Checking for same release..."
 set +e
