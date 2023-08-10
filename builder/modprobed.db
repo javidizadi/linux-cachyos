@@ -153,6 +153,7 @@ sparse_keymap
 sr_mod
 stp
 ttm
+tun
 udp_tunnel
 usb_storage
 usbhid
