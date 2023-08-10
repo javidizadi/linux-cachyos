@@ -6,6 +6,11 @@ on:
       package-name:
         required: true
         type: string
+  workflow_dispatch:
+    inputs:
+      package-name:
+        required: true
+        type: string
 
 env:
   PACKAGE_NAME: ${{ inputs.package-name }}
