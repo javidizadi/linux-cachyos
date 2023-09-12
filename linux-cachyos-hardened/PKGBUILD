@@ -156,6 +156,10 @@ _use_kcfi=${_use_kcfi-}
 # If you use ZFS, refrain from building the RT kernel
 _build_zfs=${_build_zfs-}
 
+# Builds the nvidia module and package it into a own base
+# This does replace the requirement of nvidia-dkms
+_build_nvidia=${_build_nvidia-}
+
 # Enable bcachefs
 _bcachefs=${_bcachefs-}
 
@@ -196,6 +200,8 @@ if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_k
     )
 fi
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
+_nv_ver=535.104.05
+_nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 source=(
     "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
     "config"
@@ -206,6 +212,11 @@ source=(
 if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
     source+=("git+https://github.com/cachyos/zfs.git#commit=f9a2d94c957d0660ad1f4cfbb0a909eb8e6086df")
+fi
+
+# NVIDIA pre-build module support
+if [ -n "$_build_nvidia" ]; then
+    source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_ver}/${_nv_pkg}.run")
 fi
 
 case "$_cpusched" in
@@ -637,11 +648,27 @@ prepare() {
     echo "Save configuration for later reuse..."
     cat .config > "${startdir}/config-${pkgver}-${pkgrel}${pkgbase#linux}"
 
+    if [ -n "$_build_nvidia" ]; then
+        cd "${srcdir}"
+        sh "${_nv_pkg}.run" --extract-only
+    fi
 }
 
 build() {
     cd ${srcdir}/${_srcname}
     make ${BUILD_FLAGS[*]} -j$(nproc) all
+
+    if [ -n "$_build_nvidia" ]; then
+        cd "${srcdir}/${_nv_pkg}/kernel"
+        local MODULE_FLAGS=(
+           KERNEL_UNAME="${pkgver}-${pkgsuffix}"
+           IGNORE_PREEMPT_RT_PRESENCE=1
+           NV_EXCLUDE_BUILD_MODULES='__EXCLUDE_MODULES'
+           SYSSRC="${srcdir}/${_srcname}"
+           SYSOUT="${srcdir}/${_srcname}"
+        )
+        make ${BUILD_FLAGS[*]} ${MODULE_FLAGS[*]} -j$(nproc) modules
+    fi
 
     if [ -n "$_build_zfs" ]; then
         cd ${srcdir}/"zfs"
@@ -784,10 +811,22 @@ _package-zfs(){
     #  sed -i -e "s/EXTRAMODULES='.*'/EXTRAMODULES='${pkgver}-${pkgbase}'/" "$startdir/zfs.install"
 }
 
+_package-nvidia(){
+    pkgdesc="nvidia module of ${_nv_ver} driver for the linux-$pkgsuffix kernel"
+    depends=("linux-$pkgsuffix=$_kernver" "nvidia-utils=${_nv_ver}" "libglvnd")
+    provides=('NVIDIA-MODULE')
+    license=('custom')
+
+    cd "${srcdir}/${_nv_pkg}/"
+    install -dm755 "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
+    install -m644 kernel/*.ko "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
+    install -Dt "$pkgdir/usr/share/licenses/${pkgname}" -m644 LICENSE
+    find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +
+}
+
 pkgname=("$pkgbase" "$pkgbase-headers")
-if [ -n "$_build_zfs" ]; then
-    pkgname+=("$pkgbase-zfs")
-fi
+[ -n "$_build_zfs" ] && pkgname+=("$pkgbase-zfs")
+[ -n "$_build_nvidia" ] && pkgname+=("$pkgbase-nvidia")
 for _p in "${pkgname[@]}"; do
     eval "package_$_p() {
     $(declare -f "_package${_p#$pkgbase}")
@@ -796,7 +835,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 b2sums=('0d8b6e447a7fe390b44967ab8dc2e116de29b6fac15a91fe8398d091f5803984495dea595d53938e75f0213b5268bbdb63a86284463552c8e59ffb02cb98ce17'
-        'c626827c74526f5762e8919981b1bbc6d49f4d617327cfe4f199d42c3de088bf683ba1488058879e5be6c0e46383477843f7ec669b49547542483f3a1213b77a'
+        'af0f70d56c4a784131a0f7c231e365a33a8b1031951a72de25e074db7b8ec6c884ba09aab82955bde49f1cba8d19e07f82e832c98da05d29e4c2f306ee411577'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
         '7c5a7b0c6a8a81c9e995db034067c81e5815d110ac9be8629017dd893c64ab312b3ea52509b3cede79acb6de3c119be1abae6705ec773e8119927c8249297c27'
         '1a4cc4ff5db0be0ecc0775b3a11f49bebe9f8684013137b0f1b1631c1d05e408472d9c29ea519d77c47c2611610d8cdb63fbea20ffb852793706ac7b02b7eed2'
