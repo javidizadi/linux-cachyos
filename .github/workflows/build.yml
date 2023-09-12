@@ -1,0 +1,53 @@
+name: build
+
+on: 
+  workflow_call:
+    inputs:
+      package-name:
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      package-name:
+        required: true
+        type: string
+
+env:
+  PACKAGE_NAME: ${{ inputs.package-name }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Compute SHA256 of package directory
+        run: |
+          cd ${{ env.PACKAGE_NAME }}
+          hash=$(find . -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -c 1-64)
+          echo "PACKAGE_DIRECTORY_HASH=$hash" >> $GITHUB_ENV
+
+      - run: mkdir ./builder/cache
+
+      - uses: actions/cache@v3
+        with:
+          path: ./builder/cache
+          key: ccache-${{ env.PACKAGE_NAME }}-${{ env.PACKAGE_DIRECTORY_HASH }}
+          restore-keys: |
+            ccache-${{ env.PACKAGE_NAME }}
+            ccache-
+
+      - name: build Docker image
+        working-directory: builder
+        run: docker build . --file Dockerfile --tag ${{ github.repository }}:latest
+
+      - name: run Docker image
+        working-directory: builder
+        run: |
+          docker run -i \
+          -e GITHUB_KEY=${{ secrets.GITHUB_TOKEN }} \
+          -e REPO=${{ github.repository }} \
+          -e PKG=${{ env.PACKAGE_NAME }} \
+          -v "$(realpath ./cache)":/home/builder/.cache/ccache:Z \
+          ${{ github.repository }}:latest
