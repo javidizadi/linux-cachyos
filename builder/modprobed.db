@@ -115,6 +115,7 @@ nft_chain_nat
 nft_compat
 nft_counter
 nft_masq
+nouveau
 overlay
 pcspkr
 pkcs8_key_parser
