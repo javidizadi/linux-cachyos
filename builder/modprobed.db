@@ -144,6 +144,7 @@ rtsx_pci
 rtsx_pci_sdmmc
 serio
 serio_raw
+sg
 sha512_ssse3
 snd
 snd_hda_codec
