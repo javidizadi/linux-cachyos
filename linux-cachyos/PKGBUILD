@@ -243,8 +243,8 @@ case "$_cpusched" in
         source+=("${_patchsource}/sched/0001-bore-cachy.patch"
                  "${_patchsource}/misc/0001-hardened.patch");;
     sched-ext) ## Sched-ext with BORE
-        source+=("${_patchsource}/sched/0001-bore-cachy.patch"
-                 "${_patchsource}/sched/0001-sched-ext.patch");;
+        source+=("${_patchsource}/sched/0001-sched-ext.patch"
+                 "${_patchsource}/sched/0001-bore-cachy-ext.patch");;
 esac
 
 ## bcachefs Support
@@ -582,7 +582,9 @@ prepare() {
     fi
 
     ### Disable DEBUG
-    if [ -n "$_disable_debug" ]; then
+    # Doesn't work with sched-ext
+    # More infos here: https://github.com/CachyOS/linux-cachyos/issues/187
+    if [[ "$_cpusched" != "sched-ext" &&  -n "$_disable_debug" ]]; then
         scripts/config -d DEBUG_INFO \
             -d DEBUG_INFO_BTF \
             -d DEBUG_INFO_DWARF4 \
@@ -695,7 +697,7 @@ build() {
 
     if [ "$_cpusched" = "sched-ext" ]; then
         # Build the sched_ext schedulers
-        cd "$srcdir/sched_ext/tools/sched_ext"
+        cd "$srcdir/$_srcname/tools/sched_ext"
         unset CFLAGS
         unset CXXFLAGS
         make CC=clang LLVM=1 -j
@@ -844,7 +846,7 @@ _package-schedulers() {
    pkgdesc="Schedulers for $pkgdesc kernel"
    depends=('libbpf' 'bpf' 'clang')
 
-   cd "${srcdir}/sched_ext/tools/sched_ext/build/bin"
+   cd "$srcdir/$_srcname/tools/sched_ext/build/bin"
 
    install -Dm755 scx_central "$pkgdir"/usr/bin/scx_central
    install -Dm755 scx_flatcg "$pkgdir"/usr/bin/scx_flatcg
